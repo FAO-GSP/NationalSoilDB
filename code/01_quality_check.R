@@ -1,6 +1,7 @@
 ################################################################################
 ## QUALITY CHECKS ##############################################################
 ################################################################################
+library(tidyverse)
 library(aqp)
 library(sf)
 library(sp)
@@ -14,7 +15,7 @@ hor <-  read_csv("data_output/horizon.csv")
 # https://epsg.io/6204
 site %>% 
   st_as_sf(coords = c("x", "y"), crs = 6204) %>% # convert to spatial object
-  mapview() # visualise in an interactive map
+  mapview(zcol = "year", cex = 2, lwd = 0) # visualise in an interactive map
 
 # repeated locations
 x <- site %>% 
