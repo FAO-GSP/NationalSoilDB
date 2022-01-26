@@ -1,11 +1,24 @@
 ################################################################################
 ## QUALITY CHECKS ##############################################################
 ################################################################################
+
+install.packages("aqp")
+install.packages("sf")
+install.packages("yaml")
+library(sp)
+library(mapview)
+
 library(tidyverse)
 library(aqp)
 library(sf)
 library(sp)
 library(mapview)
+
+rm(list = ls())
+setwd("C:/Users/angel/git/NationalSoilDB/") # set your working directory
+
+
+
 
 # Load site and horizon data ---------------------------------------------------
 site <- read_csv("data_output/site.csv")
@@ -16,6 +29,9 @@ hor <-  read_csv("data_output/horizon.csv")
 site %>% 
   st_as_sf(coords = c("x", "y"), crs = 6204) %>% # convert to spatial object
   mapview(zcol = "year", cex = 2, lwd = 0) # visualise in an interactive map
+# errors related to yaml package
+# https://community.rstudio.com/t/error-when-starting-rstudio-there-is-no-package-yaml/4070
+ 
 
 # repeated locations
 x <- site %>% 
