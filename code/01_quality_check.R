@@ -2,9 +2,9 @@
 ## QUALITY CHECKS ##############################################################
 ################################################################################
 
-install.packages("aqp")
-install.packages("sf")
-install.packages("mapview")
+# install.packages("aqp")
+# install.packages("sf")
+# install.packages("mapview")
 
 library(tidyverse)
 library(aqp)
