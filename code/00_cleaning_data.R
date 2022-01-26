@@ -9,7 +9,7 @@ rm(list = ls())
 setwd("C:/Users/angel/git/NationalSoilDB/") # set your working directory
 
 
-# Pipe symbol %>% (in tidyverse package) --------------------------------------
+# Pipe symbol %>% (in tidyverse package) ---------------------------------------
 # We use the pipe symbol %>%  to concatenate actions (functions)
 # For instance, if apply 1 + 1 %>% + 3 the result is 5
 1 + 1 %>% 
@@ -27,6 +27,9 @@ hor_phys <- read_excel("data_input/Profiles_data.xlsx", sheet = "Hor_phys")
 hor_mech <- read_excel("data_input/Profiles_data.xlsx", sheet = "Hor_mech")
 # metadata (not available)
 
+# Other formats ----------------------------------------------------------------
+# Google Spreadsheets https://github.com/tidyverse/googlesheets4
+# CSV files (use read_csv() function)
 
 # Clean data and select useful variables =======================================
 # Site -------------------------------------------------------------------------
@@ -76,10 +79,12 @@ is.na(hor_des) %>% colSums()
 # Select (and rename) useful columns and filter out usefulness rows
 hor_des %>% filter(is.na(ProfID2))# check rows with missing values
 
+names(hor_des)
 hor_des <- hor_des %>% 
   select(pid = ProfID2, hid = HorID, hor_no = HorNO, top = DepthFrom, 
-         bottom = DepthTo, hor_code = Code, hor_mk = Hor_MK, mak = MAKtext) %>% # select and rename
-  filter(!is.na(pid)) # we remove profiles without X coordinate
+         bottom = DepthTo, hor_code = Code, 
+         hor_mk = Hor_MK, mak = MAKtext) %>%                # select and rename
+  filter(!is.na(pid))                 # we remove profiles without X coordinate
 
 hor_des
 is.na(hor_des) %>% colSums()
@@ -89,7 +94,7 @@ hor_des <- hor_des %>%
          top = as.numeric(top),
          bottom = as.numeric(bottom))
 
-# Horizon chemical analysis ----------------------------------------------------------
+# Horizon chemical analysis ----------------------------------------------------
 hor_chem
 
 # Remove first row 
@@ -103,10 +108,12 @@ hor_chem <- hor_chem %>%
 is.na(hor_chem) %>% colSums()
 
 # Select (and rename) useful columns and filter out usefulness rows
+names(hor_chem)
 hor_chem <- hor_chem %>% 
   select(hid = HorID, caco3 = CaCO3, humus = Humus, total_N = Total_N,
          ph_h2o = pH_H2O, ph_kcl = pH_nKCl, ap = Easily_available_P2O5,
-         ak = Easily_available_K2O, Y1, sum_bases = S, cec = `T`, base_sat = `V %`) # select and rename
+         ak = Easily_available_K2O, Y1,
+         sum_bases = S, cec = `T`, base_sat = `V %`) # select and rename
 hor_chem
 
 # Change column type
@@ -125,7 +132,7 @@ hor_chem <- hor_chem %>%
 
 hor_chem
 
-# Horizon physical analysis ----------------------------------------------------------
+# Horizon physical analysis ----------------------------------------------------
 hor_phys
 
 # Remove first row 
@@ -152,7 +159,7 @@ hor_phys <- hor_phys %>%
 
 hor_phys
 
-# Horizon mechanical analysis ----------------------------------------------------------
+# Horizon mechanical analysis --------------------------------------------------
 hor_mech
 
 # Remove first row 
@@ -166,6 +173,7 @@ hor_mech <- hor_mech %>%
 is.na(hor_mech) %>% colSums()
 
 # Select (and rename) useful columns and filter out usefulness rows
+names(hor_mech)
 hor_mech <- hor_mech %>% 
   select(hid = HorID, coarse_frag = Skeleton, clay = Clay, silt = Silt,
          Fine_sand, Coarse_sand, total = Total) # select and rename
