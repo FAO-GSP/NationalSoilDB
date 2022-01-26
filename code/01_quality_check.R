@@ -4,14 +4,11 @@
 
 install.packages("aqp")
 install.packages("sf")
-install.packages("yaml")
-library(sp)
-library(mapview)
+install.packages("mapview")
 
 library(tidyverse)
 library(aqp)
 library(sf)
-library(sp)
 library(mapview)
 
 rm(list = ls())
