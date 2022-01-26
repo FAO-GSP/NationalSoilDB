@@ -31,6 +31,10 @@ hor_mech <- read_excel("data_input/Profiles_data.xlsx", sheet = "Hor_mech")
 # Google Spreadsheets https://github.com/tidyverse/googlesheets4
 # CSV files (use read_csv() function)
 
+# For Cyrillic characters, review this link
+# https://stackoverflow.com/questions/47381746/working-with-cyrillic-in-r
+
+
 # Clean data and select useful variables =======================================
 # Site -------------------------------------------------------------------------
 site %>% View()
