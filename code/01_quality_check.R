@@ -35,7 +35,6 @@ x <- site %>%
   st_as_sf(coords = c("x", "y"), crs = 6204)  
 # evaluate which sites are at zero distance
 sp::zerodist(as_Spatial(x))
-x[c(2530,3096),]
 
 # identify the profiles
 x <- x[sp::zerodist(as_Spatial(x)) %>% as.vector(),] %>% 
