@@ -1,0 +1,11 @@
+unit_of_measure_id,unit_label,unit_url,unit_description
+1,Dimensionless,"Used for pH, a scale with no units.",
+2,dS/m,"Decisiemens per meter, used for measuring electrical conductivity (EC).",
+3,%,"Percent, used for soil organic carbon (SOC), particle size distribution (PSD), and aggregate stability (AS).",
+4,g/kg,"Grams per kilogram, alternative unit for soil organic carbon (SOC).",
+5,mg/kg,"Milligrams per kilogram, used for total Kjeldahl nitrogen (TKN), available phosphorus (P), extractable micronutrients and heavy metals.",
+6,cmol/kg,"Centimoles of charge per kilogram, used for cation exchange capacity (CEC) and extractable K, Ca, Mg, Na.",
+7,%,"Percent, used for soil organic carbon (SOC), particle size distribution (PSD), and aggregate stability (AS).",
+8,g/cm³,"Grams per cubic centimeter, used for bulk density (BD).",
+9,%,"Percent, used for soil organic carbon (SOC), particle size distribution (PSD), and aggregate stability (AS).",
+10,mg/kg,"Milligrams per kilogram, used for total Kjeldahl nitrogen (TKN), available phosphorus (P), extractable micronutrients and heavy metals.",

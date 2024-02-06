@@ -1,0 +1,15 @@
+procedure_phys_chem_id,procedure_phys_chem_label,procedure_phys_chem_url
+91,pHH2O (soil reaction) in 1:2.5 soil/water solution,https://www.isric.org/sites/default/files/isric_report_2014_01.pdf
+203,Elec. conductivity at 1:5 soil/water ratio,https://www.isric.org/sites/default/files/isric_report_2014_01.pdf
+228,Walkley-Black method (chromic acid digestion),https://www.fao.org/3/ca7471en/CA7471EN.pdf
+6,"Kjeldahl, and ammonia distillation",https://www.isric.org/sites/default/files/isric_report_2014_01.pdf
+278,Olsen (if pH > 7) resp. Mehlich (if pH < 7). Particularly used for available P.,https://www.isric.org/sites/default/files/isric_report_2014_01.pdf
+314,"Exch bases (Ca, Mg, K, Na) buffered at pH 7, in 1M NH4OAc",https://www.isric.org/sites/default/files/isric_report_2014_01.pdf
+315,"Exch bases (Ca, Mg, K, Na) buffered at pH 7, in 1M NH4OAc",https://www.isric.org/sites/default/files/isric_report_2014_01.pdf
+316,"Exch bases (Ca, Mg, K, Na) buffered at pH 7, in 1M NH4OAc",https://www.isric.org/sites/default/files/isric_report_2014_01.pdf
+317,"Exch bases (Ca, Mg, K, Na) buffered at pH 7, in 1M NH4OAc",https://www.isric.org/sites/default/files/isric_report_2014_01.pdf
+197,"Sand, silt, clay fractions (2-50-2000um)-with appropriate dispersion-hydrometer",https://www.isric.org/sites/default/files/isric_report_2014_01.pdf
+123,"CEC at unknown buffer, in Mehlich III exchange solution",https://www.isric.org/sites/default/files/isric_report_2014_01.pdf
+115,"Whole earth. Core sampling (pF rings), at field capacity (0.33 bar, 33 kPa, 336 cm, pF 2.5), not corrected for coarse fragments if any",https://www.isric.org/sites/default/files/isric_report_2014_01.pdf
+299,SOIL AGGREGATE STABILITY BY WET SIEVING,https://repository.cimmyt.org/bitstream/handle/10883/3389/98401.pdf?sequence=1&isAllowed=y
+275,Mehlich3 method (extractant 0.2 N CH3COOH + 0.25 N NH4NO3 + 0.015 N NH4F + 0.013 N HNO3 + 0.001 M EDTA),https://doi.org/10.1080/00103628409367568
