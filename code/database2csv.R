@@ -31,7 +31,8 @@ observation_phys_chem <- read_csv(paste0(path_to_csv, 'observation_phys_chem.csv
     procedure_phys_chem_id = as.integer(procedure_phys_chem_id),
     unit_of_measure_id = as.integer(unit_of_measure_id),
     value_min = as.numeric(value_min),
-    value_max = as.numeric(value_max)
+    value_max = as.numeric(value_max),
+    observation_phys_chem_r_label = as.character(observation_phys_chem_r_label)
   )
 names(observation_phys_chem)
 
@@ -73,8 +74,7 @@ property_phys_chem <- read_csv(paste0(path_to_csv, 'property_phys_chem.csv')) %>
   mutate(
     property_phys_chem_id = as.integer(property_phys_chem_id),
     property_phys_chem_label = as.character(property_phys_chem_label),
-    property_phys_chem_url= as.character(property_phys_chem_url),
-    property_phys_chem_r_label = as.character(property_phys_chem_r_label)
+    property_phys_chem_url= as.character(property_phys_chem_url)
   )
 names(property_phys_chem)
 
@@ -136,11 +136,11 @@ horizon_tibble <- profile %>%
   full_join(property_phys_chem, by = "property_phys_chem_id") %>%  
   select(profile_id, profile_code, element_id, type, order_element, upper_depth, 
          lower_depth, specimen_id, specimen_code, result_phys_chem_id,
-         property_phys_chem_r_label, value)
+         observation_phys_chem_r_label, value)
   
 horizon_tibble <- horizon_tibble %>% 
   # Spread the label_property values into separate columns
-  pivot_wider(names_from = property_phys_chem_r_label, values_from = value)
+  pivot_wider(names_from = observation_phys_chem_r_label, values_from = value)
 
 write_csv(site_tibble, "../data_output/site_glosis.csv")
 write_csv(horizon_tibble, "../data_output/horizon_glosis.csv")
