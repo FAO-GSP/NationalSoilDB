@@ -9,7 +9,7 @@ setwd("~/Dropbox/Github/NationalSoilDB-main/code")
 setwd("../")
 
 # Define the path to the Excel file
-path_to_excel <- 'csv_files/template.xlsx'
+path_to_excel <- 'data_input/template.xlsx'
 
 # Load DB types
 source('code/db_types.R')
