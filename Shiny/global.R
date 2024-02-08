@@ -4,10 +4,8 @@ library(shinydashboard)
 library(xlsx)
 library(writexl)
 
-# Assuming db_types.R is properly defined and accessible
-#source('db_types.R')
-
 # Function for loading and converting types for 'each' sheet
+# Assuming type_conversions are properly defined and accessible on global.R
 load_and_convert_types <- function(path, sheet_name, type_conversions) {
     data <- read.xlsx2(path, sheetName = sheet_name)
     for (col_name in names(type_conversions)) {
