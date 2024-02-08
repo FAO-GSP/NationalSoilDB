@@ -15,7 +15,7 @@ ui <- dashboardPage(
             p(
                 class = "text-muted",
                 align = "center",
-                paste("CARSIS")
+                paste("SOILCARE-CARSIS")
             ),
             p(
                 class = "text-muted",
@@ -25,10 +25,16 @@ ui <- dashboardPage(
         )
     ),
     dashboardBody(
-        tabBox(
+        tabBox(width="100%",
             id = "resultsTab",
-            tabPanel("Site Data", tableOutput("siteResults")),
-            tabPanel("Horizon Data", tableOutput("horizonResults"))
+            tabPanel("Site Data", div(DT::dataTableOutput("siteResults"),
+                                      style = "overflow-y: scroll;overflow-x: scroll;"
+                                      )
+                     ),
+            tabPanel("Horizon Data", div(DT::dataTableOutput("horizonResults"),
+                                   style = "overflow-y: scroll;overflow-x: scroll;"
+                                   )
+                     )
+            )
         )
     )
-)
