@@ -1,6 +1,6 @@
 
 ui <- dashboardPage(
-    dashboardHeader(title = "Harmonize Soil DB",titleWidth = 400),
+    dashboardHeader(title = "National Soil Repository",titleWidth = 400),
     dashboardSidebar(
         fluidRow(
             align = "center",
