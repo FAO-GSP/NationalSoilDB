@@ -61,12 +61,12 @@ server <- function(input, output, session) {
         reactiveData$horizon_tibble <- horizon_tibble # Placeholder
         
         # Output for site data table
-        output$siteResults <- renderTable({
+        output$siteResults <- DT::renderDataTable({
             reactiveData$site_tibble
         })
-        
+
         # Output for horizon data table
-        output$horizonResults <- renderTable({
+        output$horizonResults <- DT::renderDataTable({
             reactiveData$horizon_tibble
         })
     })
