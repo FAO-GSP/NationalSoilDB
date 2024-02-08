@@ -23,7 +23,7 @@ load_and_convert_types <- function(path, sheet_name, type_conversions) {
   return(data)
 }
 
-# Load and convert types for 'element' sheet
+# Load and convert types for 'each' sheet
 element <- load_and_convert_types(path_to_excel, 'element', element_types)
 observation_phys_chem <- load_and_convert_types(path_to_excel, 'observation_phys_chem', observation_phys_chem_types)
 plot <- load_and_convert_types(path_to_excel, 'plot', plot_types)
@@ -31,6 +31,7 @@ procedure_phys_chem <- load_and_convert_types(path_to_excel, 'procedure_phys_che
 profile <- load_and_convert_types(path_to_excel, 'profile', profile_types)
 project <- load_and_convert_types(path_to_excel, 'project', project_types)
 property_phys_chem <- load_and_convert_types(path_to_excel, 'property_phys_chem', property_phys_chem_types)
+result_phys_chem <- load_and_convert_types(path_to_excel, 'result_phys_chem', result_phys_chem_types)
 site <- load_and_convert_types(path_to_excel, 'site', site_types)
 site_project <- load_and_convert_types(path_to_excel, 'site_project', site_project_types)
 unit_of_measure <- load_and_convert_types(path_to_excel, 'unit_of_measure', unit_of_measure_types)
