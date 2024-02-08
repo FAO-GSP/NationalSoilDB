@@ -15,17 +15,12 @@ ui <- dashboardPage(
             p(
                 class = "text-muted",
                 align = "center",
-                paste("SoilFER")
+                paste("CARSIS")
             ),
             p(
                 class = "text-muted",
                 align = "center",
                 paste("FAO-GSP")
-            ),
-            p(
-                class = "text-muted",
-                align = "center",
-                tags$a(href = "https://www.fao.org/documents/card/en?details=cc9430en", "SoilFER Site")
             )
         )
     ),
