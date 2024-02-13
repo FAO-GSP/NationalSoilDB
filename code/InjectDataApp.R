@@ -45,7 +45,8 @@ ui <- dashboardPage(skin = "red" ,
       id = "tabs",
       width = 12,
       tabPanel("Project", DTOutput("viewProject")),
-      tabPanel("Site", DTOutput("viewSite"))
+      tabPanel("Site", DTOutput("viewSite")),
+      tabPanel("Plot", DTOutput("viewPlot"))
       # Add more tabs for other tables as needed
     )
   )
@@ -92,11 +93,35 @@ server <- function(input, output, session) {
     })
   }
 
-  # Fetch updated 'site' table data to display
+  # Fetch updated 'project' table data to display
   output$viewProject <- renderDT({
     if (!is.null(dbCon())) {
       # Use the connection stored in dbCon()
       df <- dbGetQuery(dbCon(), "SELECT * FROM project")
+      return(df)
+    } else {
+      # Return an empty data frame or a message indicating no connection
+      return(data.frame())  # Or a more informative placeholder
+    }
+  }, options = list(pageLength = 20))
+  
+  # Fetch updated 'site' table data to display
+  output$viewSite <- renderDT({
+    if (!is.null(dbCon())) {
+      # Use the connection stored in dbCon()
+      df <- dbGetQuery(dbCon(), "SELECT * FROM site")
+      return(df)
+    } else {
+      # Return an empty data frame or a message indicating no connection
+      return(data.frame())  # Or a more informative placeholder
+    }
+  }, options = list(pageLength = 20))
+  
+  # Fetch updated 'plot' table data to display
+  output$viewPlot <- renderDT({
+    if (!is.null(dbCon())) {
+      # Use the connection stored in dbCon()
+      df <- dbGetQuery(dbCon(), "SELECT * FROM plot")
       return(df)
     } else {
       # Return an empty data frame or a message indicating no connection
@@ -115,18 +140,42 @@ server <- function(input, output, session) {
     # Read the uploaded file
     site_tibble <- read.csv(input$fileUpload$datapath)
     
-    # Example: Insert data into 'site' table
+    #  Insert data into 'project' table
     # Adjust this logic based on your actual database schema
     try({
-      unique_projects <- unique(site_tibble[, c("project_id", "project_name")])
-      for (row in 1:nrow(unique_projects)) {
+      unique_data <- unique(site_tibble[, c("project_id", "project_name")])
+      for (row in 1:nrow(unique_data)) {
         query <- sprintf("INSERT INTO project (project_id, name) VALUES (%d, '%s') ON CONFLICT (project_id) DO NOTHING;",
-                         unique_projects$project_id[row], unique_projects$project_name[row])
+                         unique_data$project_id[row], unique_data$project_name[row])
         # Corrected line: use dbCon() to get the current connection object
         safeExecute(dbCon(), query)
       }
     })
-    # Fetch updated 'site' table data to display
+    
+    # Insert data into the 'site' table
+    # Assuming 'position' is generated from 'longitude' and 'latitude', and these fields exist in your 'site' table
+    try({
+    unique_data <- unique(site_tibble[, c("site_id", "site_code", "longitude", "latitude")])
+    for (row in 1:nrow(unique_data)) {
+      query <- sprintf("INSERT INTO site (site_id, site_code, location) VALUES (%d, '%s', ST_SetSRID(ST_MakePoint(%f, %f), 4326)) ON CONFLICT (site_id) DO NOTHING;",
+                       unique_data$site_id[row], unique_data$site_code[row], unique_data$longitude[row], unique_data$latitude[row])
+      safeExecute(dbCon(), query)
+    }
+  })
+    
+    
+    # Insert data into the 'plot' table
+    try({
+    unique_data <- unique(site_tibble[, c("plot_id", "plot_code", "site_id", "plot_type")])
+    for (row in 1:nrow(unique_data)) {
+      query <- sprintf(
+        "INSERT INTO plot (plot_id, plot_code, site_id, plot_type) VALUES (%d, '%s', %d, '%s') ON CONFLICT (plot_id) DO NOTHING;",
+        unique_data$plot_id[row], unique_data$plot_code[row], unique_data$site_id[row], unique_data$plot_type[row])
+      safeExecute(dbCon(), query)
+    }
+    })
+    
+    # Fetch updated 'project' table data to display
     output$viewProject <- renderDT({
       if (!is.null(dbCon())) {
         # Use the connection stored in dbCon()
@@ -137,6 +186,31 @@ server <- function(input, output, session) {
         return(data.frame())  # Or a more informative placeholder
       }
     }, options = list(pageLength = 20))
+    
+    # Fetch updated 'site' table data to display
+    output$viewSite <- renderDT({
+      if (!is.null(dbCon())) {
+        # Use the connection stored in dbCon()
+        df <- dbGetQuery(dbCon(), "SELECT * FROM site")
+        return(df)
+      } else {
+        # Return an empty data frame or a message indicating no connection
+        return(data.frame())  # Or a more informative placeholder
+      }
+    }, options = list(pageLength = 20))
+    
+      # Fetch updated 'plot' table data to display
+      output$viewPlot <- renderDT({
+        if (!is.null(dbCon())) {
+          # Use the connection stored in dbCon()
+          df <- dbGetQuery(dbCon(), "SELECT * FROM plot")
+          return(df)
+        } else {
+          # Return an empty data frame or a message indicating no connection
+          return(data.frame())  # Or a more informative placeholder
+        }
+      }, options = list(pageLength = 20))
+    
   })
   
 }
