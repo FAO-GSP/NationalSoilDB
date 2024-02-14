@@ -30,13 +30,12 @@ PostgreSQL install
     * sudo apt update
     * sudo apt install postgresql postgresql-contrib
     * sudo systemctl start postgresql.service
-* To switch to the postgres account on your server
+	To switch to the postgres account on your server
     * sudo -i -u postgres
-* To access the PostgreSQL prompt
+	To access the PostgreSQL prompt
     * psql
-* To exit the PostgreSQL prompt:
+	To exit the PostgreSQL prompt:
     * \q
-* 
 
 - How to create a new database
 	Double click on a database to open psql terminal (allow to Open a Terminal) and type:  CREATE DATABASE name_of_database;
