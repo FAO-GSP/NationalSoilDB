@@ -54,7 +54,16 @@ ui <- dashboardPage(
       width = 12,
       tabPanel("Project", DTOutput("viewProject")),
       tabPanel("Site", DTOutput("viewSite")),
-      tabPanel("Plot", DTOutput("viewPlot"))
+      tabPanel("Site Project", DTOutput("viewSite_project")),
+      tabPanel("Plot", DTOutput("viewPlot")),
+      tabPanel("Profile", DTOutput("viewProfile")),
+      tabPanel("Element", DTOutput("viewElement")),
+      tabPanel("Unit_of_measure", DTOutput("viewUnit_of_measure")),
+      tabPanel("Procedure_phys_chem", DTOutput("viewProcedure_phys_chem")),
+      tabPanel("Property_phys_chem", DTOutput("viewProperty_phys_chem")),
+      tabPanel("Observation_phys_chem", DTOutput("viewObservation_phys_chem")),
+      tabPanel("Result_phys_chem", DTOutput("viewResult_phys_chem")),
+      tabPanel("Glosis procedures", DTOutput("viewGlosis_procedures"))
     )
   )
 )
