@@ -130,7 +130,7 @@ server <- function(input, output, session) {
       df <-
         dbGetQuery(dbCon(), sprintf("SELECT * FROM %s", tableName))
       df
-    }, options = list(
+    }, filter = "top", options = list(
       pageLength = 20),
     rownames = FALSE
     )
