@@ -132,13 +132,23 @@ server <- function(input, output, session) {
       df
     }, options = list(
       pageLength = 20),
-      rownames = FALSE
+    rownames = FALSE
     )
   }
   
   output$viewProject <- renderDataTables("project")
   output$viewSite <- renderDataTables("site")
+  output$viewSite_project <- renderDataTables("site_project")
   output$viewPlot <- renderDataTables("plot")
+  output$viewProfile <- renderDataTables("profile")
+  output$viewElement <- renderDataTables("element")
+  output$viewUnit_of_measure <- renderDataTables("unit_of_measure")
+  output$viewProcedure_phys_chem <- renderDataTables("procedure_phys_chem")
+  output$viewProperty_phys_chem <- renderDataTables("property_phys_chem")
+  output$viewObservation_phys_chem <- renderDataTables("observation_phys_chem")
+  output$viewResult_phys_chem <- renderDataTables("result_phys_chem")
+  output$viewGlosis_procedures <- renderDataTables("glosis_procedures")
+
   
   # Dynamically render fileInput based on connection status
   output$dynamicFileInput <- renderUI({
@@ -186,6 +196,22 @@ server <- function(input, output, session) {
       }
     })
     
+    # Insert data into the 'site_project' table
+    try({
+      unique_data <- 
+        unique(site_tibble[, c("site_id", "project_id")])
+      # Insert data
+      for (row in 1:nrow(unique_data)) {
+        # Prepare the SQL INSERT statement
+        query <- sprintf(
+          "INSERT INTO site_project (site_id, project_id) VALUES (%s, %s) ON CONFLICT (site_id) DO NOTHING;",
+          unique_data$site_id[row],
+          unique_data$project_id[row]
+        )
+        safeExecute(dbCon(), query, session)
+      }
+    })
+    
     # Insert data into the 'plot' table
     try({
       unique_data <-
@@ -202,11 +228,151 @@ server <- function(input, output, session) {
       }
     })
     
+
+    # Insert data into the 'profile' table
+    try({
+      unique_data <- 
+        unique(site_tibble[, c("profile_id", "profile_code", "plot_id")])
+      # Insert data
+      for (row in 1:nrow(unique_data)) {
+        query <- sprintf(
+          "INSERT INTO profile (profile_id, profile_code, plot_id) VALUES (%d, '%s', %d) ON CONFLICT (profile_id) DO NOTHING;",
+          unique_data$profile_id[row],
+          unique_data$profile_code[row],
+          unique_data$plot_id[row]
+        )
+        safeExecute(dbCon(), query, session)
+      }
+    })
+    
+    # Insert data into the 'element' table
+    try({
+      unique_data <- unique(site_tibble[c("profile_id")])
+      # Insert data
+      for (row in 1:nrow(unique_data)) {
+      query <- sprintf(
+        "INSERT INTO element (profile_id) VALUES (%d) ON CONFLICT (element_id) DO NOTHING;",
+        unique_data$profile_id[row]
+      )
+      safeExecute(dbCon(), query, session)
+      }
+    })
+    
+    # Insert data into the 'unit_of_measure' table
+    # try({
+    # unique_data <- 
+    # unique(site_tibble[, c("unit_of_measure_id", "label", "description", "url")])
+    #  for (row in 1:nrow(unique_data)) {
+    #   # Prepare the SQL INSERT statement
+    #   query <- sprintf(
+    #     "INSERT INTO unit_of_measure (label, description, url) VALUES ('%s', '%s', '%s') ON CONFLICT (unit_of_measure_id) DO NOTHING;",
+    #     unit_of_measure_tibble$label[row], 
+    #     unit_of_measure_tibble$description[row], 
+    #     unit_of_measure_tibble$url[row]
+    #  )
+    #   safeExecute(dbCon(), query, session)
+    # }
+    #})
+    
+    # # Insert data into the 'procedure_phys_chem' table
+    # try({
+    #  unique_data <- 
+    #  unique(site_tibble[, c("procedure_phys_chem_id", "label", "url")])
+    #  for (row in 1:nrow(unique_data)) {
+    #   # Prepare the SQL INSERT statement
+    #   query <- sprintf(
+    #     "INSERT INTO procedure_phys_chem (procedure_phys_chem_id, label, url) VALUES (%d, '%s', '%s') ON CONFLICT (procedure_phys_chem_id) DO NOTHING;",
+    #     unique_data$procedure_phys_chem_id[row], 
+    #     unique_data$label[row], 
+    #     unique_data$url[row]
+    #   )
+    #     safeExecute(dbCon(), query, session)
+    #   }
+    # })
+    
+    # # Insert data into the 'property_phys_chem' table
+    # try({
+    #  unique_data <- 
+    # unique(site_tibble[, c("property_phys_chem_id", "label", "url")])
+    #  for (row in 1:nrow(unique_data)) {
+    #   # Prepare the SQL INSERT statement
+    #   query <- sprintf(
+    #   "INSERT INTO property_phys_chem (property_phys_chem_id, label, url) VALUES (%d, '%s', '%s') ON CONFLICT (property_phys_chem_id) DO NOTHING;",
+    #                    unique_data$property_phys_chem_id[row], 
+    #                    unique_data$label[row], 
+    #                    unique_data$url[row]
+    #   )
+    #     safeExecute(dbCon(), query, session)
+    #   }
+    # })
+    
+    
+    # # Insert data into the 'observation_phys_chem' table
+    # try({
+    #  unique_data <- 
+    #  unique(site_tibble[c("observation_phys_chem_id","property_phys_chem_id","procedure_phys_chem_id","unit_of_measure_id","value_min","value_max","observation_phys_chem_r_label")])
+    #  for (row in 1:nrow(unique_data)) {
+    #   # Prepare the SQL INSERT statement
+    #  query <- sprintf(
+    #    "INSERT INTO observation_phys_chem (property_phys_chem_id, procedure_phys_chem_id, unit_of_measure_id, value_min, value_max, observation_phys_chem_r_label) VALUES (%d, %d, %d, %d, %d, %d,'%s') ON CONFLICT (observation_phys_chem_id) DO NOTHING;",
+    #    unique_data$property_phys_chem_id[row], 
+    #    unique_data$procedure_phys_chem_id[row],
+    #    unique_data$unit_of_measure_id[row],
+    #    unique_data$value_min[row], 
+    #    unique_data$value_max[row],
+    #    unique_data$observation_phys_chem_r_label[row]
+    #  )
+    #    safeExecute(dbCon(), query, session)
+    #  }
+    # })
+    
+    # # Insert data into the 'result_phys_chem' table
+    # try({
+    #  unique_data <- 
+    # unique(site_tibble[c("result_phys_chem_id", "observation_phys_chem_id","element_id","value")])
+    # for (row in 1:nrow(unique_data)) {
+    #   # Prepare the SQL INSERT statement
+    #   query <- sprintf(
+    #     "INSERT INTO result_phys_chem (observation_phys_chem_id, element_id, value) VALUES (%d, %d, %f) ON CONFLICT (result_phys_chem_id) DO NOTHING;",
+    #     result_phys_chem_tibble$observation_phys_chem_id[row], 
+    #     result_phys_chem_tibble$element_id[row],
+    #     result_phys_chem_tibble$value[row]
+    #  )
+    #   safeExecute(dbCon(), query, session)
+    # }
+    #})
+    
+    
+    # # Insert data into the 'glosis_procedures' table
+    # try({
+    #  unique_data <- 
+    #  unique(site_tibble[c("result_phys_chem_id", "observation_phys_chem_id","element_id","value")])
+    #  for (row in 1:nrow(unique_data)) {
+    #   # Prepare the SQL INSERT statement
+    #   query <- sprintf(
+    #     "INSERT INTO glosis_procedures (name, description) VALUES ('%s', '%s', ) ON CONFLICT (procedure_id) DO NOTHING;",
+    #     unique_data$name[row], 
+    #     unique_data$description[row]
+    #  )
+    #   safeExecute(dbCon(), query, session)
+    # }
+    #})
+    
+    
     output$viewProject <- renderDataTables("project")
     output$viewSite <- renderDataTables("site")
+    output$viewSite_project <- renderDataTables("site_project")
     output$viewPlot <- renderDataTables("plot")
+    output$viewProfile <- renderDataTables("profile")
+    output$viewElement <- renderDataTables("element")
+    output$viewUnit_of_measure <- renderDataTables("unit_of_measure")
+    output$viewProcedure_phys_chem <- renderDataTables("procedure_phys_chem")
+    output$viewProperty_phys_chem <- renderDataTables("property_phys_chem")
+    output$viewObservation_phys_chem <- renderDataTables("observation_phys_chem")
+    output$viewResult_phys_chem <- renderDataTables("result_phys_chem")
+    output$viewGlosis_procedures <- renderDataTables("glosis_procedures")
+
     
   })
   
 }
-
