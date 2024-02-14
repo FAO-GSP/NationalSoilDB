@@ -30,10 +30,13 @@ PostgreSQL install
     * sudo apt update
     * sudo apt install postgresql postgresql-contrib
     * sudo systemctl start postgresql.service
+      
 To switch to the postgres account on your server
     * sudo -i -u postgres
+    
 To access the PostgreSQL prompt
     * psql
+    
 To exit the PostgreSQL prompt:
     * \q
 
