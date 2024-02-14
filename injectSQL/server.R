@@ -130,7 +130,10 @@ server <- function(input, output, session) {
       df <-
         dbGetQuery(dbCon(), sprintf("SELECT * FROM %s", tableName))
       df
-    }, options = list(pageLength = 20))
+    }, options = list(
+      pageLength = 20),
+      rownames = FALSE
+    )
   }
   
   output$viewProject <- renderDataTables("project")
