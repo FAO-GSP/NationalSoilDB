@@ -4,3 +4,5 @@ Use this as a template repository to create your own national repository.
 
 
 Keep NationalSoilDB as keyword in your readme file.
+
+The folder injectSQL contains a Shiny app to inject soil data from cvs files directly to SQL tables. The app informs for errors in the data formats when uploading it. 
