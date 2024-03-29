@@ -29,4 +29,6 @@ Using the Application:
 * Visualization Dashboard:
     * Click 'Render Dashboard' to create a visualization dashboard displaying location and properties of your data as an HTML file.
     * The resulting file will be stored in the 'r-scripts' folder and can be opened with any web browser.
+
+
 Note: Ensure Docker Desktop is running before starting the application. For any issues or inquiries, please refer to the documentation or contact the repository maintainers.
