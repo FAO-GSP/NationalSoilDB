@@ -1,0 +1,281 @@
+---
+title: "CARSIS Database"
+author: "Global Soil Partnership"
+output:
+  flexdashboard::flex_dashboard:
+    theme: paper
+    logo: www/fao_logo2.png
+    favicon: www/fao_logo1.png
+---
+
+```{r setup, include=FALSE}
+lapply(c("shiny","flexdashboard","rpostgis","DBI","RPostgres","DT","crosstalk","leaflet","RColorBrewer","viridis","dplyr","tidyr","reactable","reactablefmtr","sparkline","readxl","ggplot2","plotly"), library, character.only = TRUE)
+#library(aqp)
+
+```
+
+```{r postgres, include=FALSE}
+# Database connection setup
+#dbname <- "carsis"
+dbname <- isolate(input$db_name_input)
+con <- dbConnect(RPostgres::Postgres(), dbname = dbname, host = "postgis", port = 5432, user = "gsp", password = "gsp")
+
+query <- "
+SELECT 
+    sp.site_id, 
+    s.site_code, 
+    p.project_id, 
+    p.name, 
+    p.description, 
+    ST_AsText(l.coordinates::geography) AS location,
+    ST_X(l.coordinates::geometry) AS long, 
+    ST_Y(l.coordinates::geometry) AS lat
+FROM 
+    site_project sp
+JOIN 
+    project p ON sp.project_id = p.project_id
+JOIN 
+    site s ON s.site_id = sp.site_id
+JOIN 
+    location l ON l.location_id = s.site_id;
+    "
+
+# Execute query and prepare shared data
+sch <- dbGetQuery(con, query)
+
+query <- sprintf("SELECT 
+pr.name AS project_name,
+s.site_code,
+rpc.result_phys_chem_id, 
+rpc.value,
+opc.observation_phys_chem_r_label,
+e.specimen_code
+FROM 
+result_phys_chem rpc
+JOIN 
+element e ON rpc.element_id = e.element_id
+JOIN 
+profile p ON e.profile_id = p.profile_id
+JOIN 
+plot pl ON p.plot_id = pl.plot_id
+JOIN 
+site s ON pl.site_id = s.site_id
+JOIN 
+site_project sp ON s.site_id = sp.site_id
+JOIN 
+project pr ON sp.project_id = pr.project_id
+JOIN 
+observation_phys_chem opc ON rpc.observation_phys_chem_id = opc.observation_phys_chem_id;")
+
+site_tibble <- dbGetQuery(con, query)
+
+# Assuming your data frame is named df
+site_tibble <- site_tibble %>%
+  select(-result_phys_chem_id) %>%
+  group_by(project_name, site_code,specimen_code, observation_phys_chem_r_label) %>%
+  summarise(value = mean(value, na.rm = TRUE), .groups = 'drop') %>%
+  ungroup() %>%
+  pivot_wider(names_from = observation_phys_chem_r_label, values_from = value,
+              names_glue = "{observation_phys_chem_r_label}") %>%
+  arrange(project_name, site_code, specimen_code)
+
+# Join the transformed dataframe
+sch <- left_join(sch,site_tibble, by="site_code") %>%
+  mutate_if(is.numeric, round, digits = 2)
+
+sch.a <- sch[,c(2,4:5,7:10)]
+sch.b <- sch[,c(4,2,10:length(sch))]
+
+# Store data as a shared object
+sd0 <- SharedData$new(sch, key = ~specimen_code, group = "sd1")
+sd <- SharedData$new(sch.a,  group = "sd1")
+sd2 <- SharedData$new(sch.b,  group = "sd1")
+
+tags$head(
+  tags$style(HTML("
+    .checkbox-inline { display: inline-block; }
+    .form-group .checkbox { display: inline-block; margin-left: 10px; }
+    /* Adjust spacing and alignment as needed */
+  "))
+)
+
+```
+
+Data Query {data-icon="ion-stats-bars" data-orientation=columns}
+=====================================  
+
+## Selection {#plot-tab data-width=350}
+
+### Filters
+
+```{r filters}
+
+filter_checkbox("name", "Project Name", sd, ~name, inline = TRUE)
+
+#filter_select("site_code", "Site", sd, ~site_code)
+
+```
+
+### Map
+
+```{r map}
+
+projpal <- colorFactor(plasma(8), sd$name)
+
+# Create Leaflet map and add coloured circle markers
+leaflet(sd) %>%
+  addTiles() %>%
+  addCircleMarkers(lng = ~long, 
+                   lat = ~lat, 
+                   radius = 5,
+                   weight = 1, 
+                   fillColor = ~projpal(name),
+                   stroke=TRUE,
+                   fillOpacity = 0.8,
+                   popup = ~paste(name, "<br>", site_code)) %>%
+  addLegend("bottomright", pal = projpal, values = ~name, labels = "Data ", title = "Project") %>%
+  addEasyButton(easyButton(icon="fa-globe", title="Zoom to Bounds",onClick=JS("function(btn, map){ map.setZoom(11); }"))) 
+
+```
+
+
+## Datatables {#data-tab .tabset .tabset-pills .tabset-fade data-width=650}
+
+### Location
+   
+```{r location}
+
+    DT::datatable(sd, extensions = c('FixedHeader', 'Buttons','Scroller','Select'),
+                  filter = 'top', 
+                  selection = 'none',
+                  class = 'cell-border stripe',
+                  editable = 'cell',
+                  rownames = FALSE,
+                  options = list(
+                    dom = 'Bfrtip',
+                    buttons = c('selectAll', 'selectNone','copy', 'csv', 'excel', 'pdf', 'print'),
+                    select = list(style = 'multi', items = 'row'),
+                    paging = TRUE,
+                    pageLength = 40,
+                    scrollX = TRUE, 
+                    scrollY = '900px',
+                    fixedHeader = TRUE,
+                    scrollCollapse = TRUE,
+                    keys=TRUE)
+                  )
+
+
+```
+
+
+### Attributes
+
+```{r attributes}
+
+    DT::datatable(sd2, extensions = c('FixedHeader','Buttons','Scroller'),
+                  filter = 'top', 
+                  selection=list(mode = 'multiple'),
+                  #selection = 'none',
+                  class = 'cell-border stripe',
+                  editable = 'cell',
+                  rownames = FALSE,
+                  options = list(
+                    dom = 'Bfrtip',
+                    buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+                    select = list(style = 'multi', items = 'row'),
+                    paging = TRUE,
+                    pageLength = 40,
+                    scrollX = TRUE, 
+                    scrollY = '900px',
+                    fixedHeader = TRUE,
+                    scrollCollapse = TRUE,
+                    keys=TRUE)
+                  )
+
+
+```
+
+
+
+### Boxplot
+
+```{r boxplot}
+
+# bar_chart <- function(label, width = "100%", height = "16px", fill = "#D53A47", background = "#EEEEEE") {
+#   bar <- div(style = list(background = fill, width = width, height = height))
+#   chart <- div(style = list(flexGrow = 1, marginLeft = "8px", background = background), bar)
+#   div(style = list(display = "flex", alignItems = "center"), label, chart)
+# }
+# reactable(
+#   sd2,
+#   columns = list(
+#     ph = colDef(align = "left", cell = function(value, index) {
+#       width <- paste0(value / max(sd2$data()$ph) * 100, "%")
+#       bar_chart(round(value,2), width = width)
+#     }),
+#     soc = colDef(align = "left", cell = function(value, index) {
+#       width <- paste0(value / max(sd2$data()$soc) * 100, "%")
+#       bar_chart(round(value,2), width = width)
+#     })
+#   )
+# )
+
+reactable(
+  sd2,
+  defaultColDef = colDef(
+    cell = data_bars(sd2$data(), text_position = "inside-base", fill_color = "#E42D3A")
+  ),
+   defaultPageSize = 40
+)
+
+```
+
+
+Information {data-orientation=rows data-icon="fa-info-circle"}
+===================================== 
+
+### Dashboard Information:
+
+This dashboard offers an interactive, user-friendly platform for exploring the **ISO 28258** CARSIS database, incorporating spatial visualization with data table interaction.
+
+1. **Database Query**: Your query filters the soil data stored in PostgreSQL. The `filter` box utilises `crosstalk` to create interactive filters that affect both the map and the datatable. This enhances the dashboard's interactivity by allowing users to filter the displayed data dynamically.
+
+2. **Crosstalk Integration**: The application is prepared for interactivity across widgets. This enables filtering actions in one widget to automatically reflect in others.
+
+3. **Interactive Map and DataTable**: The map markers use longitude and latitude from the query, and popups display the project name and site code. The points are coloured according to their project `name`. The DataTable box includes buttons for exporting the data in various formats, enhancing usability.
+
+## Tables and Their Relationships
+
+### `project`
+- **Description**: Contains details about different projects, including their names. 
+- **Relationships**: Each project can be associated with multiple sites.
+
+### `site`
+- **Description**: Represents specific locations. 
+- **Relationships**: Each site can have multiple plots and is linked to one or more projects through the `site_project` table.
+
+### `site_project`
+- **Description**: A junction table that establishes a many-to-many relationship between sites and projects.
+- **Relationships**: Allows each site to be associated with multiple projects and vice versa.
+
+### `plot`
+- **Description**: Contains information about specific plots within a site.
+- **Relationships**: Each plot can contain multiple profiles.
+
+### `profile`
+- **Description**: Represents a detailed examination or analysis profile within a plot, potentially containing multiple elements.
+- **Relationships**: Linked to plots and can encompass various elements.
+
+### `element`
+- **Description**: Details specific elements (or specimens) within a profile, each of which can have multiple results associated with it.
+- **Relationships**: Associated with profiles and can have multiple analysis results.
+
+### `result_phys_chem`
+- **Description**: Holds the actual physical and chemical results of analyses performed on elements, including the observation values.
+- **Relationships**: Linked to elements for which the analyses were conducted.
+
+### `observation_phys_chem`
+- **Description**: Contains the definitions and labels for different types of physical and chemical observations.
+- **Relationships**: Defines the parameters for the `result_phys_chem` records.
+
+

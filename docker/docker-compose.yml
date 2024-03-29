@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  postgis:
+    image: postgis/postgis
+    restart: always
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: gsp
+      POSTGRES_PASSWORD: "gsp"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgis:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - carsis-net
+
+  shinyapp:
+    build:
+      context: ./shiny
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - USER=shiny
+      - PASSWORD=shiny
+    ports:
+      - "3838:3838"
+    volumes:
+      - ./r-scripts:/srv/shiny-server/
+    depends_on:
+      - postgis
+    networks:
+      - carsis-net
+
+networks:
+  carsis-net:
