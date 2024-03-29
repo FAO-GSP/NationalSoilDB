@@ -1,5 +1,5 @@
 ---
-title: "CARSIS Database"
+title: "ISO-28258 Soil domain model"
 author: "Global Soil Partnership"
 output:
   flexdashboard::flex_dashboard:
@@ -236,7 +236,7 @@ Information {data-orientation=rows data-icon="fa-info-circle"}
 
 ### Dashboard Information:
 
-This dashboard offers an interactive, user-friendly platform for exploring the **ISO 28258** CARSIS database, incorporating spatial visualization with data table interaction.
+This dashboard offers an interactive, user-friendly platform for exploring the **ISO 28258** domain model, incorporating spatial visualization with data table interaction.
 
 1. **Database Query**: Your query filters the soil data stored in PostgreSQL. The `filter` box utilises `crosstalk` to create interactive filters that affect both the map and the datatable. This enhances the dashboard's interactivity by allowing users to filter the displayed data dynamically.
 
