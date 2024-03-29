@@ -12,7 +12,7 @@ ui <- fluidPage(useShinyjs(),
                         style = "position: absolute; right: 20px; top: 5px;"
                       )
                     ),
-                    titleWidth = 250
+                    titleWidth = 300
                   ),
                   dashboardSidebar(
                     tags$head(
