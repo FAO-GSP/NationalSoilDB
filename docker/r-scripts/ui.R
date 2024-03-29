@@ -3,7 +3,7 @@ ui <- fluidPage(useShinyjs(),
                 dashboardPage(
                   skin = "red" ,
                   dashboardHeader(
-                    title = "CARSIS Soil Database",
+                    title = "ISO-28258 Soil domain model",
                     tags$li(
                       class = "dropdown",
                       tags$img(
