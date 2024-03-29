@@ -1,0 +1,1 @@
+This is a dockerfile to create a postgreSQL and Shiny app to insert soil data according to the ISO 28258 data model.
