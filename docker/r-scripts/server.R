@@ -335,7 +335,7 @@ server <- function(input, output, session) {
       footer = NULL
     ))
     # Render the R Markdown document
-    output_path <- "carsis.html"
+    output_path <- "iso28258DM.html"
     rmarkdown::render("dashboard.Rmd", output_file = output_path)
     # After rendering, remove the modal
     removeModal()
