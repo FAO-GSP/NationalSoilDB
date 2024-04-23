@@ -11,7 +11,9 @@ Instructions:
     * Navigate to the downloaded repository folder:
       cd /path/to/repository/docker  
     * Run the following command to build and start the Docker containers:
-      docker-compose up --build   
+      docker-compose up --build
+
+      
 Installation Details:
 * The installation will create two new folders in your docker folder:
     * data/: This folder serves as a mirror volume on your disk where the PostgreSQL databases will be stored.
